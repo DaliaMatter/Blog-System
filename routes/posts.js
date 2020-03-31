@@ -1,14 +1,17 @@
 const express = require("express");
 const PostModel = require("../models/post");
+const userModel = require("../models/user");
 
 const router = express.Router();
 
 // List Posts
 router.get("/", function(req, res) {
-    PostModel.find({}, (err, posts) => {
-        if (err) return res.send(err);
-        res.json(posts);
-    });
+    PostModel.find({})
+        .populate("author", "name")
+        .exec((err, posts) => {
+            if (err) return res.send(err);
+            res.json(posts);
+        });
 });
 
 // List One Post by has Id
@@ -22,17 +25,18 @@ router.get("/:id", function(req, res) {
 // Add Post
 router.post("/", function(req, res) {
     const {
-        body: { title, content }
+        body: { title, content, author }
     } = req;
     const post = new PostModel({
         title,
-        content
-    })
-
+        content,
+        author
+    });
+    
     post.save((err, post) => {
         if (err) return res.send(err);
         res.json(post);
-    })
+    });
 });
 
 // Upadte Post Date

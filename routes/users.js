@@ -29,12 +29,11 @@ router.post("/", function(req, res) {
         email,
         password,
         posts
-    })
-
+    });
     user.save((err, user) => {
         if (err) return res.send(err);
         res.json(user);
-    })
+    });
 });
 
 // Upadte User Date
@@ -51,6 +50,17 @@ router.delete("/:id", function(req, res) {
         if (err) return res.send(err);
         res.json(user);
     });
+});
+
+// List User Posts
+
+router.get("/:id/posts", function(req, res) {
+    UserModel.findById(req.params.id)
+        .populate("posts")
+        .exec((err, posts) => {
+            if (err) return res.send(err);
+            res.json(posts);
+        });
 });
 
 // export Rout file
